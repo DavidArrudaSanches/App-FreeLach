@@ -45,5 +45,27 @@ const carregarTarefas = ()=>{
 }
 
 const adicionarTarefa = () => {
-    
+    const taskName=document.querySelector('#taskName').value;
+    const taskDescription = document.querySelector('#taskDescription').value
+    const taskDate = document.querySelector('#taskDate').value
+    const taskTime = document.querySelector('#taskTime').value
+
+    if(taskName && taskDate && taskTime){
+        const taskList = document.querySelector('#taskList')
+
+        const taskItem = document.createElement('div')
+        taskItem.classList.add('task-item')
+
+
+        const dataFormatada = new Date(taskData).toLocaleDateString('pt-BR',{
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit',
+        })
+
+        const taskHTML = 
+        `
+        <h3>
+        `
+    }
 }
