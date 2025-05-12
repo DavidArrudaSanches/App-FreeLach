@@ -65,7 +65,55 @@ const adicionarTarefa = () => {
 
         const taskHTML = 
         `
-        <h3>
+        <h3>${taskName}</h3>
+        <p>${taskDescription}</p>
+        <p><strong>${taskDate}</strong>${taskTime}</p>
+         <div class="task-actions">
+                <button class="complete-btn">Concluir</button>
+                <button class="edit-btn">Editar</button>
+                <button class="delet-btn">Excluir</button>
+         </div>
         `
+
+        taskItem.querySelector('.complete-btn').addEventListener('click', function(){
+            marcarComoConcluida(this)
+        })
+        
+        taskItem.querySelector('.edit-btn').addEventListener('click', function(){
+            editarTarefa(this)
+        })
+        
+        taskItem.querySelector('.delete-btn').addEventListener('click', function(){
+            excluirTarefa(this)
+        })
+
+        const tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
+        tarefas.push({
+            nome:taskName,
+            description:taskDescription,
+            data: taskDate,
+            hora:taskTime,
+            html:taskHTML
+
+        })
+
+        localStorage.setItem('tarefas', JSON.stringify(tarefas))
+        alert('Tarefa adicionada com sucesso!')
+        document.querySelector('#taskForm').reset();
+    }else{
+        alert('Por favor, preencha todos os campos obrigatórios')
     }
+}
+
+window.onload = function(){
+    definirSaudacao()
+    carregarTarefas()
+
+    document.querySelector('#adicionarTarefaBtn').addEventListener('click', function(e){
+        e.preventDefault();
+        adicionarTarefa();
+
+    })
+    document.querySelector('#filtrarTodasBtn').addEventListener('click', ()=> filtrarTarefas('todas'))
+    document.querySelector('#filtrarPendentesBtn').addEventListener('click', () =>filtrarTarefas)
 }
