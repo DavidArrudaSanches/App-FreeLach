@@ -1,4 +1,30 @@
-const definirSaudacao = () => {
+// Hora e data com as saudações
+/* const definirSaudacao = () => {
+    const header = document.querySelector('#saudacaoHeader');
+    setInterval(() => {
+        const now = new Date();
+        const horas = now.getHours();
+        const minutos = now.getMinutes().toString().padStart(2,'0');
+        const segundos = now.getSeconds().toString().padStart(2, '0');
+        const dataAtual = now.toLocaleDateString('pt-BR');
+
+        let saudacao;
+
+        if(horas >= 6 && horas < 12 ){
+            saudacao = 'Bom dia!';
+        }else if(horas >= 12 && horas <= 18){
+            saudacao = 'Boa tarde!'
+        }else{
+            saudacao = 'Boa noite!'
+        }
+
+        header.innerHTML = <span>${saudacao}</span> <span>${dataAtual} ${horas}:${minutos}:${segundos}</span>;
+
+    }, 1000);
+} */
+
+    
+    const definirSaudacao = () => {
         const header = document.querySelector('#saudacaoHeader');
         if (!header) {
             console.error("Elemento com id 'saudacaoHeader' não encontrado.");
@@ -67,15 +93,16 @@ const adicionarTarefa = () =>{
         const taskItem = document.createElement('div');
         taskItem.classList.add('task-item');
 
-        const dataInput = taskDate.split('-');
-
-
-        const dataFormatada = `${dataInput[2]}/${dataInput[1]}/${dataInput[0]}`;
+        const dataFormada = new Date(taskDate).toLocaleDateString('pt-BR', {
+            day:'2-digit',  
+            month:'2-digit',
+            year: '2-digit'
+        });
 
         const taskHTML = `
         <h3>${taskName}</h3>
         <p>${taskDescription}</p>
-        <p><strong>Vencimento:</strong> ${dataFormatada} às ${taskTime}</p>
+        <p><strong>Vencimento:</strong> ${dataFormada} às ${taskTime}</p>
             <div class="task-actions">
                 <button class="complete-btn">Concluir</button>
                 <button class="edit-btn">Editar</button>
@@ -122,125 +149,20 @@ window.onload = function(){
     carregarTarefas();
 
     // Adicionando event listeners para os botões
-  document.querySelector('#adicionarTarefaBtn').addEventListener('click', function (e) {
-    e.preventDefault();
-    adicionarTarefa();
-  });
-
-  // Event listeners para os botões de filtro
-  document.querySelector('#filtrarTodasBtn').addEventListener('click', function() {
-    filtrarTarefas('todas');
-  });
-  
-  document.querySelector('#filtrarPendentesBtn').addEventListener('click', function() {
-    filtrarTarefas('pendentes');
-  });
-  
-  document.querySelector('#filtrarConcluidasBtn').addEventListener('click', function() {
-    filtrarTarefas('concluidas');
-  });
-  
-  // Event listeners para os botões de ordenação
-  document.querySelector('#ordenarRecentesBtn').addEventListener('click', function() {
-    ordenarTarefas('recentes');
-  });
-  
-  document.querySelector('#ordenarAntigasBtn').addEventListener('click', function() {
-    ordenarTarefas('antigas');
-  });
+    document.querySelector('#adicionarTarefaBtn').addEventListener('click', function(e){
+        e.preventDefault();
+        adicionarTarefa();
+    });
 };
 
-const marcarComoConcluida = (button) => {
-    const taskItem = button.closest('.task-item')
+const marcarComoComcluida = (button) => {}
 
-    if (taskItem.classList.contains('concluida')){
-        alert('Esta tarefa já foi concluida!')
-        return
-    }
+const editarTarefas = (button) => {}
 
-    taskItem.classList.add('concluida')
-
-    const editBtn = taskItem.querySelector('.edit-btn');
-    const deleteBtn = taskItem.querySelector('.delete-btn')
-
-    editBtn.disabled=true
-    deleteBtn.disabled=true
-
-    const taskName = taskItem.querySelector('h3').textContent
-    let tarefas = JSON.parse(localStorage.getItem('tarefas'))||[]
-    const tarefaIndex = tarefas.findIndex (t => t.nome === taskName)
-
-    if (tarefaIndex !== -1){
-        tarefas [tarefaIndex].concluida = true
-        tarefa[tarefaIndex].html = taskItem.innerHTML
-
-        localStorage.setItem('tarefas', JSON.stringify(tarefas))
-    }
-
-    setTimeout(()=>{
-        alert('Tarefa marcada como concluída')
-    }, 200)
-}
-
-const editarTarefas = (button) => {
-    const taskItem = button.closest('.task-item')
-    
-    const newName = prompt('Edite o nome da tarefa: ', taskItem.querySelector('h3').textContent())
-    const newDescription = prompt('Edite a descrição da tarefa: ', taskItem.querySelector('p').textContent())
-
-
-
-}
-
-const excluirTarefa = (button) => {
-
-    if(confirm('Deseja realmente excluir esta tarefa?')){
-        const taskItem = button.closest('.task-item')
-        const taskName = taskItem.querySelector('h3').textContent
-
-        let tarefas = JSON.parse(localStorage.get('tarefas')) || []
-
-        tarefas = tarefas.filter(t => t.nome !== taskName)
-        localStorage.setItem('tarefas', JSON.stringify(tarefa))
-
-        taskItem.remove();
-
-        alert('Tarefa excluída.')
-    }
-
-
-
-}
+const excluirTarefa = (button) => {}
 
 // Funções para filtrar tarefas
 
-const filtrarTarefas = (filtro) => {
-    const tarefas = document.querySelectorAll('.task-item')
-    console.log(tarefas)
+const filtrarTarefas = (filtro) => {}
 
-    tarefas.forEach(tarefa => {
-        switch(filtro){
-            case'todas':
-                tarefa.style.display = 'block';
-
-                break;
-        
-            case 'pendentes':
-
-                tarefa.style.display = tarefa.classList.contains('concluida') ? 'none' : 'block'
-
-                break;
-
-            case 'concluidas':
-                tarefa.style.display = tarefa.classList.contains('concluida') ? 'block' : 'none'
-
-                break;
-            }
-
-
-    })
-}
-
-const ordenarTarefas = (ordem) => {
-    
-}
+const ordenarTarefas = (ordem) => {}
