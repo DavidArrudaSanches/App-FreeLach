@@ -75,7 +75,7 @@ const adicionarTarefa = () =>{
         const taskHTML = `
         <h3>${taskName}</h3>
         <p>${taskDescription}</p>
-        <p><strong>Vencimento:</strong> ${dataFormatada} às ${taskTime}</p>
+        <p class="data"><strong>Vencimento:</strong> ${dataFormatada} às ${taskTime}</p>
             <div class="task-actions">
                 <button class="complete-btn">Concluir</button>
                 <button class="edit-btn">Editar</button>
@@ -154,6 +154,7 @@ const marcarComoConcluida = (button) => {
     const taskItem = button.closest('.task-item')
 
     if (taskItem.classList.contains('concluida')){
+        taskItem.classList.remove('concluida')
         alert('Esta tarefa já foi concluida!')
         return
     }
@@ -241,6 +242,71 @@ const filtrarTarefas = (filtro) => {
     })
 }
 
+// const ordenarTarefas = (ordem) => {
+//     // Seleciona todos os elementos .task-item
+//     const tarefas = document.querySelectorAll('.task-item');
+
+//     // Converte o NodeList em array para poder ordenar
+//     const tarefaArray = Array.from(tarefas);
+
+//     // Ordena o array com base na data de vencimento (contida em .data)
+//     tarefaArray.sort((a, b) => {
+//         const dataTextoA = a.querySelector('.data').textContent.trim(); // Ex: "2025-05-12"
+//         const dataTextoB = b.querySelector('.data').textContent.trim();
+
+
+//         function parseDataBR(dataBR) {
+//             const [dia, mes, ano] = dataBR.split('/');
+//             return new Date(`${ano}-${mes}-${dia}`);
+//         }
+
+//         const dataA = parseDataBR(dataTextoA);
+//         const dataB = parseDataBR(dataTextoB);
+
+//         return ordem === 'crescente' 
+//             ? dataA - dataB   // Mais próximas primeiro
+//             : dataB - dataA;  // Mais distantes primeiro
+//     });
+
+//     // Seleciona o container que contém as tarefas
+//     const container = document.querySelector('#taskList');
+
+//     // Remove os itens atuais e reanexa na nova ordem
+//     tarefaArray.forEach(tarefa => {
+//         container.appendChild(tarefa);
+//     });
+
+// };
+
+// document.getElementById('ordenarRecentesBtn').addEventListener('click', () => {
+//     ordenarTarefas('crescente');
+// });
+
+// document.getElementById('ordenarAntigasBtn').addEventListener('click', () => {
+//     ordenarTarefas('decrescente');
+// }); 
+
 const ordenarTarefas = (ordem) => {
+    const taskList = document.querySelector('#taskList')
+
+    const tarefas = Array.from(document.querySelectorAll('.task-item'))
+
+    const dadosTarefas= JSON.parse(localStorage.getItem('tarefas')) || []
+
+    tarefas.sort((a, b) => {
+        const nomeA = a.querySelector('h3').textContent
+        const nomeB = b.querySelector('h3').textContent
     
+        const tarefaA = dadosTarefas.find(t => t.nome === nomeA)
+        const tarefaB = dadosTarefas.find(t => t.nome === nomeB)
+    
+        const dataA  = new Date(`${tarefaA.data}T${tarefaA.hora}`)
+        const dataB  = new Date(`${tarefaB.data}T${tarefaB.hora}`)
+    
+        return ordem === 'antigas' ? dataA - dataB : dataB - dataA
+    
+    })
+
+    taskList.innerHTML = '<h2>Suas Tarefas<h2>'
+    tarefas.forEach(tarefa => taskList.appendChild(tarefa))
 }
