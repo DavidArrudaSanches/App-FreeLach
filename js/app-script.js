@@ -194,25 +194,38 @@ const editarTarefas = (button) => {
 }
 
 const excluirTarefa = (button) => {
-
-    if(confirm('Deseja realmente excluir esta tarefa?')){
-        const taskItem = button.closest('.task-item')
-        const taskName = taskItem.querySelector('h3').textContent
-
-        let tarefas = JSON.parse(localStorage.get('tarefas')) || []
-
-        tarefas = tarefas.filter(t => t.nome !== taskName)
-        localStorage.setItem('tarefas', JSON.stringify(tarefa))
-
-        taskItem.remove();
-
-        alert('Tarefa excluída.')
+  
+    // Interação com Usuário
+    if (confirm('Deseja realmente excluir esta tarefa?')) {
+        const taskItem = button.closest('.task-item');
+        const taskName = taskItem.querySelector('h3').textContent;
+    
+        //Obter as tarefas que estão no localStorage
+        let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+        let tarefasLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+        
+    
+        // Procurar no Array a tarefa que será excluída
+        const tarefaIndex = tarefas.findIndex(t => t.nome === taskName);
+    
+        if (tarefaIndex !== -1) {
+            // Remove a tarefa da lista de tarefas ativas
+            const tarefaExcluida = tarefas.splice(tarefaIndex, 1)[0];
+    
+            // Adiciona a tarefa à lixeira
+            tarefasLixeira.push(tarefaExcluida);
+    
+            // Atualiza o localStorage
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+            localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasLixeira));
+    
+            // Atualiza a interface de tarefas
+            taskItem.remove();
+    
+            alert('Tarefa movida para a lixeira.');
+        }
     }
-
-
-
-}
-
+    };
 // Funções para filtrar tarefas
 
 const filtrarTarefas = (filtro) => {
@@ -310,3 +323,21 @@ const ordenarTarefas = (ordem) => {
     taskList.innerHTML = '<h2>Suas Tarefas<h2>'
     tarefas.forEach(tarefa => taskList.appendChild(tarefa))
 }
+
+
+const recuperarTarefas = () =>{
+        
+        const tarefaLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+        
+        console.log(tarefaLixeira);
+        
+    };
+    
+    console.log(recuperarTarefas)
+    console.log(localStorage.getItem('tarefasLixeira'));
+    
+
+
+document.querySelector('lixeiraBtn').addEventListener('click', function () {
+    recuperarTarefas();
+  });
