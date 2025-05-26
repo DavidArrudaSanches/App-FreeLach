@@ -113,8 +113,13 @@ const adicionarTarefa = () =>{
         document.querySelector('#taskForm').reset();
 
     }else{
-        alert('Por favor, preencha todos os campos obrigatórios.');
+        Swal.fire({
+            icon: "error",
+            title: "Falta de informações",
+            text: "Por favor preencha os outros campos",
+          });
     }
+
 }
 
 window.onload = function(){
@@ -148,6 +153,9 @@ window.onload = function(){
   document.querySelector('#ordenarAntigasBtn').addEventListener('click', function() {
     ordenarTarefas('antigas');
   });
+  document.querySelector('#lixeiraBtn').addEventListener('click', function(){
+    mostrarTarefasExcluidas();
+});
 };
 
 const marcarComoConcluida = (button) => {
@@ -155,7 +163,11 @@ const marcarComoConcluida = (button) => {
 
     if (taskItem.classList.contains('concluida')){
         taskItem.classList.remove('concluida')
-        alert('Esta tarefa já foi concluida!')
+        Swal.fire({
+            title: "Tarefa Restaurada",
+            icon: "success",
+            draggable: true
+          });
         return
     }
 
@@ -173,25 +185,87 @@ const marcarComoConcluida = (button) => {
 
     if (tarefaIndex !== -1){
         tarefas [tarefaIndex].concluida = true
-        tarefa[tarefaIndex].html = taskItem.innerHTML
+        tarefas[tarefaIndex].html = taskItem.innerHTML
+
+        
 
         localStorage.setItem('tarefas', JSON.stringify(tarefas))
     }
 
     setTimeout(()=>{
-        alert('Tarefa marcada como concluída')
+        Swal.fire({
+            title: "Tarefa Concluida com sucesso",
+            icon: "success",
+            draggable: true
+          });
     }, 200)
 }
 
-const editarTarefas = (button) => {
-    const taskItem = button.closest('.task-item')
+// const editarTarefas = (button) => {
+//     const taskItem = button.closest('.task-item')
     
-    const newName = prompt('Edite o nome da tarefa: ', taskItem.querySelector('h3').textContent())
-    const newDescription = prompt('Edite a descrição da tarefa: ', taskItem.querySelector('p').textContent())
+//     const newName = prompt('Edite o nome da tarefa: ', taskItem.querySelector('h3').textContent);
+//     const newDescription = prompt('Edite a descrição da tarefa: ', taskItem.querySelector('p').textContent())
+
+//     const newName = prompt('Edite o nome da tarefa:', oldName);
+//     const newDescription = prompt('Edite a descrição da tarefa:', oldDescription);
+
+//     if (newName && newDescription) {
+//         taskItem.querySelector('h3').textContent = newName;
+//         taskItem.querySelector('p').textContent = newDescription;
+
+//         // Atualizar localStorage
+//         let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+//         const tarefaIndex = tarefas.findIndex(t => t.nome === oldName);
+
+//         if (tarefaIndex !== -1) {
+//             tarefas[tarefaIndex].nome = newName;
+//             tarefas[tarefaIndex].descricao = newDescription;
+
+//             // Atualiza o HTML salvo
+//             tarefas[tarefaIndex].html = taskItem.innerHTML;
+
+//             localStorage.setItem('tarefas', JSON.stringify(tarefas));
+//             alert('Tarefa atualizada com sucesso!');
+//         }
+//     } else {
+//         alert('A edição foi cancelada ou inválida.');
+//     }
+// };
+
+const editarTarefas = (button) => {
+    const taskItem = button.closest('.task-item');
+    
+    const oldName = taskItem.querySelector('h3').textContent;
+    const oldDescription = taskItem.querySelector('p').textContent;
+
+    const newName = prompt('Edite o nome da tarefa:', oldName);
+    const newDescription = prompt('Edite a descrição da tarefa:', oldDescription);
+
+    if (newName && newDescription) {
+        taskItem.querySelector('h3').textContent = newName;
+        taskItem.querySelector('p').textContent = newDescription;
+
+        // Atualizar localStorage
+        let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+        const tarefaIndex = tarefas.findIndex(t => t.nome === oldName);
+
+        if (tarefaIndex !== -1) {
+            tarefas[tarefaIndex].nome = newName;
+            tarefas[tarefaIndex].descricao = newDescription;
+
+            // Atualiza o HTML salvo
+            tarefas[tarefaIndex].html = taskItem.innerHTML;
+
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+            alert('Tarefa atualizada com sucesso!');
+        }
+    } else {
+        alert('A edição foi cancelada ou inválida.');
+    }
+};
 
 
-
-}
 
 const excluirTarefa = (button) => {
   
@@ -325,19 +399,65 @@ const ordenarTarefas = (ordem) => {
 }
 
 
-const recuperarTarefas = () =>{
+const mostrarTarefasExcluidas = () => {
+    const tarefaExcluidas = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+
+    const tarefasValidas = tarefaExcluidas.filter(tarefa => tarefa.nome);
+
+    if (tarefasValidas.length === 0) {
+        alert('Não há tarefas na lixeira');
+        return;
+    }
+
+    let mensagem = 'Tarefas na lixeira:\n\n';
+
+    tarefasValidas.forEach((tarefa, index) => {
+        mensagem += `${index + 1}. ${tarefa.nome}\n`;
+    });
+
+    const resposta = prompt(mensagem + '\nDigite o número da tarefa que deseja restaurar (ou cancele para sair):');
+
+    if (resposta && !isNaN(resposta)) {
+        const index = parseInt(resposta) - 1;
+        if (index >= 0 && index < tarefasValidas.length) {
+            recuperarTarefas(tarefasValidas[index]);
+        } else {
+            alert('Número inválido!');
+        }
+    }
+};
+
+
+
+
+
+// const recuperarTarefas = () =>{
         
-        const tarefaLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+//         const tarefaLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
         
-        console.log(tarefaLixeira);
+//         console.log(tarefaLixeira);
         
+//     };
+    
+//     console.log(recuperarTarefas)
+//     console.log(localStorage.getItem('tarefasLixeira'));
+    
+
+
+// document.querySelector('lixeiraBtn').addEventListener('click', function () {
+    //     recuperarTarefas();
+
+
+    const recuperarTarefas = (tarefaExcluida) => {
+        const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+        tarefas.push(tarefaExcluida);
+        localStorage.setItem('tarefas', JSON.stringify(tarefas));
+    
+        let tarefasExcluidas = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+        tarefasExcluidas = tarefasExcluidas.filter(t => t.nome !== tarefaExcluida.nome);
+        localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasExcluidas));
+    
+        location.reload();
     };
-    
-    console.log(recuperarTarefas)
-    console.log(localStorage.getItem('tarefasLixeira'));
-    
 
 
-document.querySelector('lixeiraBtn').addEventListener('click', function () {
-    recuperarTarefas();
-  });
